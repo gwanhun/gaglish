@@ -1,0 +1,89 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Note {
+  id        Int        @id @default(autoincrement())
+  name      String
+  order     Int
+  createdAt DateTime
+  updatedAt DateTime   @updatedAt
+  deletedAt DateTime?
+  NoteWord  NoteWord[]
+}
+
+model NoteWord {
+  id        Int       @id @default(autoincrement())
+  state     Int
+  readCoung Int
+  note      Note      @relation(fields: [noteId], references: [id])
+  noteId    Int
+  word      Word      @relation(fields: [wordId], references: [id])
+  wordId    Int
+  createdAt DateTime
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+model Word {
+  id                   Int                    @id @default(autoincrement())
+  english              String
+  korean               String
+  devMean              String
+  createdAt            DateTime
+  updatedAt            DateTime               @updatedAt
+  deletedAt            DateTime?
+  WordsOnDevFileds     WordsOnDevFileds[]
+  WordsOnPartsOfSpeech WordsOnPartsOfSpeech[]
+  NoteWord             NoteWord[]
+}
+
+model DevFiled {
+  id               Int                @id @default(autoincrement())
+  type             String
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  deletedAt        DateTime?
+  WordsOnDevFileds WordsOnDevFileds[]
+}
+
+model PartsOfSpeech {
+  id                   Int                    @id @default(autoincrement())
+  type                 String
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  deletedAt            DateTime?
+  WordsOnPartsOfSpeech WordsOnPartsOfSpeech[]
+}
+
+model WordsOnDevFileds {
+  word       Word      @relation(fields: [wordId], references: [id])
+  wordId     Int // relation scalar field (used in the `@relation` attribute above)
+  devFiled   DevFiled  @relation(fields: [devFiledId], references: [id])
+  devFiledId Int // relation scalar field (used in the `@relation` attribute above)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+
+  @@id([wordId, devFiledId])
+}
+
+model WordsOnPartsOfSpeech {
+  word            Word          @relation(fields: [wordId], references: [id])
+  wordId          Int // relation scalar field (used in the `@relation` attribute above)
+  partsOfSpeech   PartsOfSpeech @relation(fields: [partsOfSpeechId], references: [id])
+  partsOfSpeechId Int // relation scalar field (used in the `@relation` attribute above)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  deletedAt       DateTime?
+
+  @@id([wordId, partsOfSpeechId])
+}
