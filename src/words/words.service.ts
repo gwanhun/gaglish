@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { CreateWordDto } from './dto/create-word.dto';
 import { UpdateWordDto } from './dto/update-word.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class WordsService {
   constructor(private prisma: PrismaService) {}
   async create(createWordDto: CreateWordDto) {
-    const result = await this.prisma.wrods.create({ data: createWordDto });
+    const result = await this.prisma.word.create({ data: createWordDto });
     return result;
   }
 
   async findAll() {
-    const result = await this.prisma.wrods.findMany({});
+    const result = await this.prisma.word.findMany({});
     return result;
   }
 
